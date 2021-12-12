@@ -1,0 +1,23 @@
+{
+  "name": "my-bbs-koa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "koa": "^2.13.4",
+    "koa-body": "^4.2.0",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemo": "^1.0.0"
+  }
+}
