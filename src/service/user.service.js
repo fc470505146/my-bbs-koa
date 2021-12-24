@@ -1,20 +1,16 @@
-const { getdb } = require('./utils')
-const collectionName = 'user'
-class UserService {
-    constructor(db) {
-        db.then((db) => {
-            this.collection = db.collection(collectionName)
-        })
-    }
-    addUser= async(userInfo)=> {
-        this.collection.insertMany([userInfo])
-        return "成功"
-    }
-    findUser = async (username) => { 
-        return this.collection.find(username).toArray()
-    }
-    find = async (data) => { 
-        return this.collection.find(data).toArray()
-    }
+const getUser = require('../model/user.model')
+
+const find = async (obj) => {
+    const User = await getUser()
+    const result = await User.find(obj).toArray()
+    User.close()
+    return result
 }
-module.exports = new UserService(getdb())
+
+const addUser = async (obj) => {
+    const User = await getUser()
+    const result = await User.insertOne(obj)
+    User.close()
+    return result
+}
+module.exports = { find, addUser }
