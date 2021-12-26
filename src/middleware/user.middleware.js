@@ -3,6 +3,9 @@ const {
     userFormateError,
     userRegisterError,
     userAlreadyExists,
+    userNameOrPasswordError,
+    loginError,
+    loginFormaterError,
 } = require('../constant/err.type')
 
 //校验值
@@ -31,4 +34,30 @@ const verifyUser = async (ctx, next) => {
     }
     await next()
 }
-module.exports = { userValidator, verifyUser }
+const loginValidator = async (ctx, next) => {
+    const { username, password } = ctx.request.body
+    if (!username || !password) {
+        console.error('用户名或者密码为空', ctx.request.body)
+        ctx.app.emit('error', loginFormaterError, ctx)
+        return
+    }
+    await next()
+}
+const verifyLogin = async (ctx, next) => {
+    const { username, password } = ctx.request.body
+    try {
+        const res = await find({ username, password })
+        if (!res.length) {
+            console.error('用户名或者密码错误', res, { username, password })
+            ctx.app.emit('error', userNameOrPasswordError, ctx)
+            return
+        }
+        ctx.state.user = res[0]
+    } catch (error) {
+        console.error('登录错误', error)
+        ctx.app.emit('error', loginError)
+        return
+    }
+    await next()
+}
+module.exports = { userValidator, verifyUser, verifyLogin, loginValidator }

@@ -13,4 +13,12 @@ const addUser = async (obj) => {
     User.close()
     return result
 }
-module.exports = { find, addUser }
+
+const update = async (queryCons,opera) => { 
+    const User=await getUser()
+    const result = await User.updateOne(queryCons,opera)
+    User.close()
+    return result
+}
+
+module.exports = { find, addUser,update }
