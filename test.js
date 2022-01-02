@@ -26,7 +26,6 @@ const server = http.createServer((req, res) => {
                 console.log(file)
             },
         })
-
         form.parse(req, (err, fields, files) => {
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ err, fields, files }, null, 2))
@@ -36,7 +35,6 @@ const server = http.createServer((req, res) => {
         res.end('404')
     }
 })
-
 server.listen(3000, () => {
     console.log('Server listening on http://localhost:3000 ...')
 })

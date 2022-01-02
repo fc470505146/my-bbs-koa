@@ -1,11 +1,20 @@
 const jsonwebtoken = require('jsonwebtoken')
-const { addUser, update } = require('../service/user.service')
+const {
+    addUser,
+    update,
+    deleteUserOne,
+    aggregate,
+    find,
+} = require('../service/user.service')
 const {
     userRegisterError,
     loginError,
     changePasswordError,
     imageTypeError,
     patchImageError,
+    deleteUserError,
+    findPageError,
+    findUserError,
 } = require('../constant/err.type')
 const { JWT_SECRET } = require('../config')
 const { ObjectId } = require('mongodb')
@@ -89,6 +98,62 @@ class UserController {
         } catch (error) {
             console.error('上传图像路径错误', error)
             ctx.app.emit('error', patchImageError, ctx)
+            return
+        }
+    }
+    async deleteUserById(ctx) {
+        const { id } = ctx.request.body
+        const _id = ObjectId(id)
+        let res = null
+        try {
+            res = deleteUserOne({ _id })
+        } catch (error) {
+            console.error('用户删除错误', error)
+            ctx.app.emit('error', deleteUserError, ctx)
+            return
+        }
+        ctx.body = {
+            code: 0,
+            status: 200,
+            message: '删除成功',
+            result: {
+                res,
+            },
+        }
+    }
+    async findPage(ctx) {
+        const { pageNum, currentPage } = ctx.request.body
+        try {
+            //不知道数据库的具体优化，如果通过这个实现分页感觉性能不太行
+            const res = await aggregate([
+                { $skip: (currentPage - 1) * pageNum },
+                { $limit: pageNum },
+            ])
+            ctx.body = {
+                code: 0,
+                status: 200,
+                message: '查询成功',
+                result: { data: res },
+            }
+        } catch (error) {
+            console.error('User分页查询错误', error)
+            ctx.app.emit('error', findPageError, ctx)
+            return
+        }
+    }
+    async findUser(ctx) {
+        const { username } = ctx.request.body
+        try {
+            const data = await find({ username: { $regex: username } })
+            ctx.body = {
+                code: 0,
+                status: 200,
+                message: '查询成功',
+                result: { data },
+            }
+        } catch (error) {
+            console.error('查询用户失败findUser',error);
+            ctx.app.emit('error',findUserError , ctx)
             return
         }
     }

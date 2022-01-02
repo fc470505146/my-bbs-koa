@@ -53,6 +53,37 @@ module.exports = {
         status: 500,
         result: '',
     },
+    deleteUserError: {
+        code: '10010',
+        message: '用户删除错误',
+        status: 500,
+        result: '',
+    },
+    deleterUserVerifyError: {
+        code: '10011',
+        message: '参数错误',
+        status: 400,
+        result: '',
+    },
+    findPageError: {
+        code: '10012',
+        message: '用户分页查询错误',
+        status: 500,
+        result: '',
+    },
+    verifyParmsError: {
+        code: '10013',
+        message: '参数错误',
+        status: 400,
+        result: '',
+    },
+    findUserError: {
+        code: '10014',
+        message: '查询用户失败',
+        status: 500,
+        result: '',
+    },
+    //用户权限校验
     tokenExpiredError: {
         code: '10101',
         message: 'Token已过期',
@@ -68,6 +99,12 @@ module.exports = {
     tokenError: {
         code: '10103',
         message: 'token异常',
+        status: 400,
+        result: '',
+    },
+    hadAdminErorr: {
+        code: '10104',
+        message: '用户无管理员权限',
         status: 400,
         result: '',
     },

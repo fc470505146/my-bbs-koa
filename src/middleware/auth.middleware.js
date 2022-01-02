@@ -4,6 +4,7 @@ const {
     tokenError,
     tokenExpiredError,
     tokenInvalid,
+    hadAdminErorr,
 } = require('../constant/err.type')
 
 const auth = async (ctx, next) => {
@@ -28,4 +29,13 @@ const auth = async (ctx, next) => {
     await next()
 }
 
-module.exports = { auth }
+const hadAdminPermission = async (ctx, next) => {
+    const { admin } = ctx.state.user
+    if (!admin) {
+        console.error('用户无管理员权限', ctx.state.user)
+        ctx.app.emit('error', hadAdminErorr, ctx)
+        return
+    }
+    await next()
+}
+module.exports = { auth, hadAdminPermission }

@@ -3,6 +3,7 @@ const path = require('path')
 const Koa = require('koa')
 const serve = require('koa-static')
 const KoaBody = require('koa-body')
+const koaParameter=require('koa-parameter')
 const router = require('../router')
 
 const app = new Koa()
@@ -15,6 +16,7 @@ app.use(async (ctx, next) => {
 //设置静态文件位置
 app.use(serve(path.resolve('public')))
 //引入koabody和router，并进行一定的配置
+app.use(koaParameter(app))
 app.use(KoaBody())
 app.use(router.routes())
 
