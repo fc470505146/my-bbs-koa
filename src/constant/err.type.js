@@ -83,6 +83,13 @@ module.exports = {
         status: 500,
         result: '',
     },
+    //bbs业务错误
+    addBoardError: {
+        code: '10201',
+        message: '板块添加错误',
+        status: 500,
+        result: '',
+    },
     //用户权限校验
     tokenExpiredError: {
         code: '10101',
