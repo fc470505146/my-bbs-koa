@@ -1,6 +1,6 @@
 const { getConnection } = require('../db/mongodb')
 
-const getPosts = async () => {
-    return await getConnection('posts')
+const getPost = async () => {
+    return await getConnection('post')
 }
-module.exports = getPosts
+module.exports = getPost

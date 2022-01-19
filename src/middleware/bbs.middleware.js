@@ -9,6 +9,7 @@ class bbsMiddleware {
                 console.error('参数错误', error)
                 verifyParmsError.result = error
                 ctx.app.emit('error', verifyParmsError, ctx)
+                return
             }
             await next()
         }

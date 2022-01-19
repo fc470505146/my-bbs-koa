@@ -5,6 +5,9 @@ const {
     deleteUserOne,
     aggregate,
     find,
+    addUserListService,
+    findOneList,
+    findOneOption,
 } = require('../service/user.service')
 const {
     userRegisterError,
@@ -15,18 +18,27 @@ const {
     deleteUserError,
     findPageError,
     findUserError,
+    updateUserError,
+    undefindedUser,
+    addUserListError,
 } = require('../constant/err.type')
 const { JWT_SECRET } = require('../config')
 const { ObjectId } = require('mongodb')
 class UserController {
     async register(ctx) {
         const { username, password, nickname } = ctx.request.body
+        const avatar = '/img/icon-weidenglu.png'
         try {
-            const result = await addUser({ username, password, nickname })
+            const result = await addUser({
+                username,
+                password,
+                nickname,
+                avatar,
+            })
             ctx.body = {
                 code: 0,
                 message: '注册成功',
-                result: result,
+                result: { data: result },
             }
         } catch (error) {
             console.error('用户写入数据库失败', error)
@@ -122,18 +134,19 @@ class UserController {
         }
     }
     async findPage(ctx) {
-        const { pageNum, currentPage } = ctx.request.body
+        const { pageNum = 20, currentPage = 1 } = ctx.request.body
         try {
             //不知道数据库的具体优化，如果通过这个实现分页感觉性能不太行
             const res = await aggregate([
                 { $skip: (currentPage - 1) * pageNum },
                 { $limit: pageNum },
             ])
+            const total = (await find({})).length
             ctx.body = {
                 code: 0,
                 status: 200,
                 message: '查询成功',
-                result: { data: res },
+                result: { data: res, total },
             }
         } catch (error) {
             console.error('User分页查询错误', error)
@@ -142,7 +155,7 @@ class UserController {
         }
     }
     async findUser(ctx) {
-        const { username } = ctx.request.body
+        const { username = '' } = ctx.request.body
         try {
             const data = await find({ username: { $regex: username } })
             ctx.body = {
@@ -152,8 +165,82 @@ class UserController {
                 result: { data },
             }
         } catch (error) {
-            console.error('查询用户失败findUser',error);
-            ctx.app.emit('error',findUserError , ctx)
+            console.error('查询用户失败findUser', error)
+            ctx.app.emit('error', findUserError, ctx)
+            return
+        }
+    }
+    async getUserInfo(ctx) {
+        const { iat, exp, username } = ctx.state.user
+        console.log('getUserInfo:', iat, exp)
+        const res = await findOneList(
+            { username },
+            { projection: { password: 0 } }
+        )
+        console.log(res)
+        ctx.body = {
+            code: 0,
+            status: 200,
+            message: '',
+            result: { data: res },
+        }
+    }
+    async updateUser(ctx) {
+        const { _id: id, nickname, password } = ctx.request.body
+        try {
+            const _id = ObjectId(id)
+            const res = await update({ _id }, { $set: { nickname, password } })
+            if (res.upsertedCount || res.modifiedCount) {
+                ctx.body = {
+                    code: 0,
+                    status: 200,
+                    message: '修改成功',
+                    result: { data: res },
+                }
+            } else {
+                undefindedUser.result = { date: res }
+                ctx.app.emit('error', undefindedUser, ctx)
+                return
+            }
+        } catch (error) {
+            console.error(error)
+            ctx.app.emit('error', updateUserError, ctx)
+            return
+        }
+    }
+    async addUserList(ctx) {
+        try {
+            await addUserListService(ctx.state.userlist)
+            ctx.body = {
+                code: 0,
+                status: 200,
+                message: '添加成功',
+                result: '',
+            }
+        } catch (error) {
+            console.error(error)
+            addUserListError.status = 500
+            ctx.app.emit('error', addUserListError, ctx)
+            return
+        }
+    }
+    async getUserAvatarById(ctx) {
+        let { _id } = ctx.request.body
+        try {
+            _id = ObjectId(_id)
+            const res = await findOneOption([
+                { _id },
+                { projection: { avatar: 1 } },
+            ])
+            ctx.body = {
+                code: 0,
+                status: 200,
+                message: 'ok',
+                result: { data: res },
+            }
+        } catch (error) {
+            console.error(error)
+            ctx.app.emit('error', findUserError, ctx)
             return
         }
     }

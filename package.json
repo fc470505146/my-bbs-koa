@@ -12,17 +12,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "dotenv": "^10.0.0",
     "espree": "^9.2.0",
     "formidable": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^4.2.0",
-    "koa-jwt": "^4.0.3",
     "koa-parameter": "^3.0.1",
     "koa-router": "^10.1.1",
     "koa-static": "^5.0.0",
-    "mongodb": "^4.2.2"
+    "moment": "^2.29.1",
+    "mongodb": "^4.2.2",
+    "node-xlsx": "^0.21.0"
   },
   "devDependencies": {
     "eslint": "^8.4.1",

@@ -9,8 +9,8 @@ const {
 
 const auth = async (ctx, next) => {
     const { authorization = '' } = ctx.request.header
-    const token = authorization.replace('Bearer ', '')
     try {
+        const token = authorization.replace('Bearer ', '')
         const user = jwt.verify(token, JWT_SECRET)
         ctx.state.user = user
     } catch (error) {
@@ -30,8 +30,8 @@ const auth = async (ctx, next) => {
 }
 
 const hadAdminPermission = async (ctx, next) => {
-    const { admin } = ctx.state.user
-    if (!admin) {
+    const { roles = [] } = ctx.state.user
+    if (!roles.includes('admin')) {
         console.error('用户无管理员权限', ctx.state.user)
         ctx.app.emit('error', hadAdminErorr, ctx)
         return

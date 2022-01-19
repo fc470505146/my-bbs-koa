@@ -3,16 +3,18 @@ const path = require('path')
 const Koa = require('koa')
 const serve = require('koa-static')
 const KoaBody = require('koa-body')
-const koaParameter=require('koa-parameter')
+const koaParameter = require('koa-parameter')
+const cors = require('@koa/cors')
 const router = require('../router')
 
 const app = new Koa()
 
+// app.use(async (ctx, next) => {
+//     console.log(ctx.request)
+//     await next()
+// })
 //解决跨域问题
-app.use(async (ctx, next) => {
-    await next()
-    ctx.append('Access-Control-Allow-Origin', 'http://localhost:8080')
-})
+app.use(cors())
 //设置静态文件位置
 app.use(serve(path.resolve('public')))
 //引入koabody和router，并进行一定的配置

@@ -1,3 +1,4 @@
+const { avatarDefault } = require('../constant/default')
 const getUser = require('../model/user.model')
 
 const find = async (obj) => {
@@ -12,13 +13,23 @@ const findOne = async (obj) => {
     User.close()
     return result
 }
+const findOneList = async (query, filter) => {
+    const User = await getUser()
+    const result = await User.findOne(query, filter)
+    User.close()
+    return result
+}
 const addUser = async (obj) => {
     const User = await getUser()
     const result = await User.insertOne(obj)
     User.close()
     return result
 }
-
+const findOneOption = async (objlist) => {
+    const User = await getUser()
+    const result = await User.findOne(...objlist)
+    return result
+}
 const update = async (queryCons, opera) => {
     const User = await getUser()
     const result = await User.updateOne(queryCons, opera)
@@ -39,4 +50,30 @@ const aggregate = async (obj) => {
     User.close()
     return result
 }
-module.exports = { find, addUser, update, deleteUserOne, findOne, aggregate }
+
+const addUserListService = async (list) => {
+    const User = await getUser()
+    try {
+        list.forEach((item) => {
+            User.updateOne(
+                { username: item.username },
+                { $set: { ...item, avatar: avatarDefault } },
+                { upsert: true }
+            )
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+module.exports = {
+    findOneOption,
+    addUserListService,
+    find,
+    addUser,
+    update,
+    deleteUserOne,
+    findOne,
+    aggregate,
+    findOneList,
+}

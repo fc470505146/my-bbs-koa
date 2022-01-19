@@ -1,3 +1,4 @@
+const xlsx = require('node-xlsx').default
 const { findOne, find } = require('../service/user.service')
 const {
     userFormateError,
@@ -9,6 +10,7 @@ const {
     deleterUserVerifyError,
     changePasswordError,
     verifyParmsError,
+    notIncludedFieldError,
 } = require('../constant/err.type')
 
 //校验值
@@ -49,7 +51,7 @@ const loginValidator = async (ctx, next) => {
 const verifyLogin = async (ctx, next) => {
     const { username, password } = ctx.request.body
     try {
-        const res = await find({ username, password })
+        const res = await find({ username, password: password })
         if (!res.length) {
             console.error('用户名或者密码错误', res, { username, password })
             ctx.app.emit('error', userNameOrPasswordError, ctx)
@@ -140,7 +142,46 @@ const verifyFindUser = async (ctx, next) => {
     })
     if (check) await next()
 }
+
+const parseUserList = async (ctx, next) => {
+    try {
+        const filepath = ctx.state.files.file.filepath
+        const list = await xlsx.parse(filepath)[0]
+        //校验是否存在3个必须字段
+        if (
+            !(list.data[0].includes('username') &&
+            list.data[0].includes('password') &&
+            list.data[0].includes('nickname'))
+        ) {
+            ctx.app.emit('error', notIncludedFieldError, ctx)
+            return
+        }
+        //最后传递的数组
+        const userlist = []
+        //第一列数组搜索返回下标
+        const usernameIndex = list.data[0].indexOf('username')
+        const passwordIndex = list.data[0].indexOf('password')
+        const nicknameIndex = list.data[0].indexOf('nickname')
+        //搜索后续的每一列,生成用户对象
+        list.data.forEach((item, index) => {
+            if (index !== 0) {
+                userlist.push({
+                    username: item[usernameIndex],
+                    password: item[passwordIndex],
+                    nickname: item[nicknameIndex],
+                })
+            }
+        })
+        //用户表传递
+        ctx.state.userlist = userlist
+    } catch (error) {
+        console.error(error)
+    }
+    await next()
+}
+
 module.exports = {
+    parseUserList,
     verifyFindUser,
     verifyFindPage,
     checkPassword,
