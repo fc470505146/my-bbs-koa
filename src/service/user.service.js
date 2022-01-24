@@ -22,7 +22,6 @@ const findOneList = async (query, filter) => {
 const addUser = async (obj) => {
     const User = await getUser()
     const result = await User.insertOne(obj)
-    User.close()
     return result
 }
 const findOneOption = async (objlist) => {
@@ -33,10 +32,14 @@ const findOneOption = async (objlist) => {
 const update = async (queryCons, opera) => {
     const User = await getUser()
     const result = await User.updateOne(queryCons, opera)
-    User.close()
     return result
 }
 
+const updateUserService = async (objlist) => {
+    const User = await getUser()
+    const result = await User.updateOne(...objlist)
+    return result
+}
 const deleteUserOne = async (obj) => {
     const User = await getUser()
     const result = await User.deleteOne(obj)
@@ -76,4 +79,5 @@ module.exports = {
     findOne,
     aggregate,
     findOneList,
+    updateUserService,
 }

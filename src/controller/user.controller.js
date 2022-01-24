@@ -8,6 +8,7 @@ const {
     addUserListService,
     findOneList,
     findOneOption,
+    updateUserService,
 } = require('../service/user.service')
 const {
     userRegisterError,
@@ -24,6 +25,10 @@ const {
 } = require('../constant/err.type')
 const { JWT_SECRET } = require('../config')
 const { ObjectId } = require('mongodb')
+const {
+    updatePostManySerive,
+    updateReviewManyService,
+} = require('../service/bbs.service')
 class UserController {
     async register(ctx) {
         const { username, password, nickname } = ctx.request.body
@@ -34,6 +39,7 @@ class UserController {
                 password,
                 nickname,
                 avatar,
+                roles: ['user'],
             })
             ctx.body = {
                 code: 0,
@@ -72,15 +78,16 @@ class UserController {
         try {
             const { changePassword } = ctx.request.body
             const _id = ObjectId(userInfo._id)
-            const result = await update(
+            const res = await update(
                 { _id },
                 { $set: { password: changePassword } }
             )
             ctx.body = {
                 code: 0,
-                message: '修改成功',
+                message: 'ok',
+                status: 200,
                 result: {
-                    acknowledged: result.acknowledged,
+                    data: res,
                 },
             }
         } catch (error) {
@@ -94,16 +101,26 @@ class UserController {
         try {
             const _id = ObjectId(ctx.state.user._id)
             if (file) {
-                update({ _id }, { $set: { headpath: file.newFilename } })
+                const res = await update(
+                    { _id },
+                    { $set: { avatar: `/img/${file.newFilename}` } }
+                )
+                if (res.modifiedCount || res.upsertedCount) {
+                    await updateReviewManyService([
+                        { 'User._id': _id },
+                        { $set: { 'User.avatar': `/img/${file.newFilename}` } },
+                    ])
+                }
                 ctx.body = {
                     code: 0,
                     status: 200,
                     result: {
+                        data: res,
                         pathname: file.newFilename,
                     },
                 }
             } else {
-                console.error('文件不符合格式要求', file)
+                console.error('文件不符合格式要求', ctx.state.files)
                 ctx.app.emit('error', imageTypeError, ctx)
                 return
             }
@@ -230,8 +247,38 @@ class UserController {
             _id = ObjectId(_id)
             const res = await findOneOption([
                 { _id },
-                { projection: { avatar: 1 } },
+                { projection: { nickname: 1, avatar: 1 } },
             ])
+            ctx.body = {
+                code: 0,
+                status: 200,
+                message: 'ok',
+                result: { data: res },
+            }
+        } catch (error) {
+            console.error(error)
+            ctx.app.emit('error', findUserError, ctx)
+            return
+        }
+    }
+    async updateUserInfoById(ctx) {
+        const { nickname } = ctx.request.body
+        let { _id } = ctx.state.user
+        try {
+            const res = await updateUserService([
+                { _id: ObjectId(_id) },
+                { $set: { nickname } },
+            ])
+            if (res.modifiedCount || res.upsertedCount) {
+                await updatePostManySerive([
+                    { 'User._id': _id },
+                    { $set: { 'User.nickname': nickname } },
+                ])
+                await updateReviewManyService([
+                    { 'User._id': ObjectId(_id) },
+                    { $set: { 'User.nickname': nickname } },
+                ])
+            }
             ctx.body = {
                 code: 0,
                 status: 200,
@@ -247,3 +294,4 @@ class UserController {
 }
 
 module.exports = new UserController()
+//

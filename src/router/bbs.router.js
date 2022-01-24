@@ -21,7 +21,7 @@ const {
     getRecommend,
     getPostById,
 } = require('../controller/bbs.controller')
-const { addLike, delLike, getLike } = require('../controller/detail.controller')
+const { addLike, delLike, getLike, getPostByUserId, getRecommendByUserId, getCollectionByUserId, getIndex } = require('../controller/detail.controller')
 const { auth, hadAdminPermission } = require('../middleware/auth.middleware')
 const { validator } = require('../middleware/utils.middleware')
 
@@ -202,4 +202,31 @@ router.post(
     auth,
     getLike
 )
+//个人界面信息获得
+router.post(
+    '/user/getPostByUserId',
+    validator({ _id: 'string' }),
+    auth,
+    getPostByUserId
+)
+router.post(
+    '/user/getRecommendByUserId',
+    validator({ _id: 'string' }),
+    auth,
+    getRecommendByUserId
+)
+
+router.post(
+    '/user/getCollectionByUserId',
+    validator({ _id: 'string' }),
+    auth,
+    getCollectionByUserId
+)
+//获取首页
+router.get(
+    '/index',
+    auth,
+    getIndex 
+)
+
 module.exports = router

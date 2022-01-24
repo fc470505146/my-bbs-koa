@@ -8,20 +8,17 @@ class bbsService {
     boardinsertOne = async (obj) => {
         const Board = await getBoards()
         const res = await Board.insertOne(obj)
-        Board.close()
         return res
     }
 
     deleteBoardOne = async (obj) => {
         const Board = await getBoards()
         const res = await Board.deleteOne(obj)
-        Board.close()
         return res
     }
     boardAggregate = async (listObj) => {
         const Board = await getBoards()
         const res = await Board.aggregate(listObj).toArray()
-        Board.close()
         return res
     }
 
@@ -65,6 +62,11 @@ class bbsService {
         const res = await Post.updateOne(...list)
         return res
     }
+    async updatePostManySerive (list) {
+        const Post = await getPost()
+        const res = await Post.updateMany(...list)
+        return res
+    }
     async getPostByPage (list) {
         const Post = await getPost()
         const res = await Post.aggregate(list).toArray()
@@ -74,6 +76,16 @@ class bbsService {
     async findPostOneServie (objlist) {
         const Post = await getPost()
         const res = await Post.findOne(...objlist)
+        return res
+    }
+    async aggregatePostServie (objlist) {
+        const Post = await getPost()
+        const res = await Post.aggregate(objlist).toArray()
+        return res
+    }
+    async findPostManyServie (objlist) {
+        const Post = await getPost()
+        const res = await Post.find(...objlist).toArray()
         return res
     }
     async findPost (obj) {
@@ -114,6 +126,11 @@ class bbsService {
         const res = await Review.updateOne(...list)
         return res
     }
+    async updateReviewManyService (list) {
+        const Review = await getReview()
+        const res = await Review.updateMany(...list)
+        return res
+    }
     async addCollectionServie (list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.updateOne(...list)
@@ -132,6 +149,11 @@ class bbsService {
     async findLikeAndCollectionServie (list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.findOne(...list)
+        return res
+    }
+    async aggregateLikeAndCollectionServie (list) {
+        const likeAndConection = await getLikeAndConection()
+        const res = await likeAndConection.aggregate(list).toArray()
         return res
     }
 }

@@ -221,7 +221,7 @@ class bbsController {
                 item.lastDate = moment(item.lastModified).format('MM-DD HH:mm')
                 return item
             })
-            const total = (await findPost()).length
+            const total = (await findPost({boardId:_id})).length
             ctx.body = {
                 code: 0,
                 status: 200,
@@ -375,7 +375,7 @@ class bbsController {
         try {
             const res = await addCollectionServie([
                 { _id: ObjectId(_id) },
-                { $addToSet: { collection: postId } },
+                { $addToSet: { collection: ObjectId(postId) } },
                 { upsert: true },
             ])
             ctx.body = {
@@ -396,7 +396,7 @@ class bbsController {
         try {
             const res = await addCollectionServie([
                 { _id: ObjectId(_id) },
-                { $pull: { collection: postId } },
+                { $pull: { collection: ObjectId(postId) } },
             ])
             ctx.body = {
                 code: 0,
@@ -435,7 +435,7 @@ class bbsController {
         try {
             const res = await updateLikeAndCollectionServie([
                 { _id: ObjectId(_id) },
-                { $addToSet: { recommend: postId } },
+                { $addToSet: { recommend: ObjectId(postId )} },
                 { upsert: true },
             ])
             if (res.modifiedCount || res.upsertedCount) {
@@ -462,7 +462,7 @@ class bbsController {
         try {
             const res = await updateLikeAndCollectionServie([
                 { _id: ObjectId(_id) },
-                { $pull: { recommend: postId } },
+                { $pull: { recommend: ObjectId(postId )} },
             ])
             if (res.modifiedCount || res.upsertedCount) {
                 await updatePostSerive([

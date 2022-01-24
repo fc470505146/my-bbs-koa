@@ -11,6 +11,7 @@ const {
     updateUser,
     addUserList,
     getUserAvatarById,
+    updateUserInfoById,
 } = require('../controller/user.controller')
 const { auth, hadAdminPermission } = require('../middleware/auth.middleware')
 const { parseUpload, paresExcel } = require('../middleware/upload.middleware')
@@ -54,7 +55,7 @@ router.post(
 //修改密码接口
 router.patch('/', auth, verifyChangePassword, checkPassword, changePassword)
 
-//上传图品
+//上传头像
 router.patch('/upload', auth, parseUpload, upload)
 
 //删除用户
@@ -96,10 +97,12 @@ router.post(
     addUserList
 )
 //根据id获得用户头像
+router.post('/getAvatar', validator({ _id: 'string' }), auth, getUserAvatarById)
+//用户自己修改信息
 router.post(
-    '/getAvatar',
-    validator({ _id: 'string' }),
+    '/update/userInfo',
+    validator({ nickname: 'string' }),
     auth,
-   getUserAvatarById 
+    updateUserInfoById
 )
 module.exports = router

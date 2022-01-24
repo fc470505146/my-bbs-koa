@@ -1,5 +1,6 @@
 const path = require('path')
 const formidable = require('formidable')
+const { ServiceError } = require('../constant/err.type')
 const headImgPath = path.join(__dirname, '../../public/img')
 const parseUpload = async (ctx, next) => {
     const form = formidable({
@@ -9,17 +10,24 @@ const parseUpload = async (ctx, next) => {
             return mimetype && mimetype.includes('image')
         },
     })
-    await new Promise((resolve, reject) => {
-        form.parse(ctx.req, (err, fields, files) => {
-            if (err) {
-                console.error('解析文件错误', err)
-                reject(err)
-                return
-            }
-            Object.assign(ctx.state, { fields, files })
-            resolve()
+    try {
+        await new Promise((resolve, reject) => {
+            form.parse(ctx.req, (err, fields, files) => {
+                if (err) {
+                    console.error('解析文件错误', err)
+                    reject(err)
+                    return
+                }
+                Object.assign(ctx.state, { fields, files })
+                resolve()
+            })
         })
-    })
+    } catch (error) {
+        console.error(error)
+        ctx.app.emit('error', ServiceError, ctx)
+        return
+    }
+
     await next()
 }
 const headExcelPath = path.join(__dirname, '../assets/excel')

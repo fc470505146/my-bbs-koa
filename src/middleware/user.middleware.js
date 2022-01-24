@@ -97,7 +97,7 @@ const checkPassword = async (ctx, next) => {
         const { password } = ctx.request.body
         const res = await findOne({ username })
         if (res.password !== password) {
-            console.error('输入密码错误')
+            console.error(res,password)
             ctx.app.emit('error', userNameOrPasswordError, ctx)
             return
         }
@@ -149,9 +149,11 @@ const parseUserList = async (ctx, next) => {
         const list = await xlsx.parse(filepath)[0]
         //校验是否存在3个必须字段
         if (
-            !(list.data[0].includes('username') &&
-            list.data[0].includes('password') &&
-            list.data[0].includes('nickname'))
+            !(
+                list.data[0].includes('username') &&
+                list.data[0].includes('password') &&
+                list.data[0].includes('nickname')
+            )
         ) {
             ctx.app.emit('error', notIncludedFieldError, ctx)
             return
@@ -169,6 +171,7 @@ const parseUserList = async (ctx, next) => {
                     username: item[usernameIndex],
                     password: item[passwordIndex],
                     nickname: item[nicknameIndex],
+                    roles: ['user'],
                 })
             }
         })
