@@ -38,6 +38,7 @@ const {
     updatePostSerive,
     findPostOneServie,
 } = require('../service/bbs.service')
+const { findOneOption } = require('../service/user.service')
 
 class bbsController {
     addBoard = async (ctx) => {
@@ -190,7 +191,6 @@ class bbsController {
                 let { _id } = item
                 let createDate = _id.getTimestamp()
                 item.createDate = moment(createDate).format('MM-DD HH:mm')
-                console.log(item.createDate)
                 return item
             })
             ctx.body = {
@@ -221,7 +221,7 @@ class bbsController {
                 item.lastDate = moment(item.lastModified).format('MM-DD HH:mm')
                 return item
             })
-            const total = (await findPost({boardId:_id})).length
+            const total = (await findPost({ boardId: _id })).length
             ctx.body = {
                 code: 0,
                 status: 200,
@@ -283,6 +283,21 @@ class bbsController {
                 message: 'ok',
                 result: { data: res },
             }
+            if (res.deletedCount) {
+                await updateLikeAndCollectionServie([
+                    {},
+                    {
+                        $pull: {
+                            noticeByPost: {
+                                postId: _id,
+                            },
+                            noticeByReview: {
+                                postId: _id,
+                            },
+                        },
+                    },
+                ])
+            }
         } catch (error) {
             console.error(error)
             ctx.app.emit('error', deletePostError, ctx)
@@ -290,9 +305,19 @@ class bbsController {
         }
     }
     async addReview(ctx) {
-        let { postId, content, quoteId } = ctx.request.body
-        const { _id, nickname, avatar } = ctx.state.user
+        let { postId, content, quoteId, quoteUserId, postUserId } =
+            ctx.request.body
+        const { _id } = ctx.state.user
         try {
+            const { nickname, avatar } = await findOneOption([
+                { _id: ObjectId(_id) },
+                {
+                    projection: {
+                        nickname: 1,
+                        avatar: 1,
+                    },
+                },
+            ])
             const review = {
                 postId: ObjectId(postId),
                 content,
@@ -303,6 +328,38 @@ class bbsController {
                 lastModified: new Date(),
             }
             const res = await insertReview(review)
+            if (res.insertedId) {
+                await updateLikeAndCollectionServie([
+                    { _id: ObjectId(postUserId) },
+                    {
+                        $addToSet: {
+                            noticeByPost: {
+                                _id: ObjectId(),
+                                postId: ObjectId(postId),
+                                reviewId: res.insertedId,
+                                isCheck: false,
+                            },
+                        },
+                    },
+                    { upsert: true },
+                ])
+                if (quoteId !== '0') {
+                    await updateLikeAndCollectionServie([
+                        { _id: ObjectId(quoteUserId) },
+                        {
+                            $addToSet: {
+                                noticeByReview: {
+                                    _id: ObjectId(),
+                                    postId: ObjectId(postId),
+                                    reviewId: res.insertedId,
+                                    isCheck: false,
+                                },
+                            },
+                        },
+                        { upsert: true },
+                    ])
+                }
+            }
             ctx.body = {
                 code: 0,
                 status: 200,
@@ -337,6 +394,21 @@ class bbsController {
         try {
             _id = ObjectId(_id)
             const res = await deleteReviewService({ _id })
+            if (res.deletedCount) {
+                await updateLikeAndCollectionServie([
+                    {},
+                    {
+                        $pull: {
+                            noticeByPost: {
+                                reviewId: _id,
+                            },
+                            noticeByReview: {
+                                reviewId: _id,
+                            },
+                        },
+                    },
+                ])
+            }
             ctx.body = {
                 code: 0,
                 status: 200,
@@ -435,7 +507,7 @@ class bbsController {
         try {
             const res = await updateLikeAndCollectionServie([
                 { _id: ObjectId(_id) },
-                { $addToSet: { recommend: ObjectId(postId )} },
+                { $addToSet: { recommend: ObjectId(postId) } },
                 { upsert: true },
             ])
             if (res.modifiedCount || res.upsertedCount) {
@@ -462,7 +534,7 @@ class bbsController {
         try {
             const res = await updateLikeAndCollectionServie([
                 { _id: ObjectId(_id) },
-                { $pull: { recommend: ObjectId(postId )} },
+                { $pull: { recommend: ObjectId(postId) } },
             ])
             if (res.modifiedCount || res.upsertedCount) {
                 await updatePostSerive([

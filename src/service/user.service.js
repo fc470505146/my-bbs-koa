@@ -4,19 +4,16 @@ const getUser = require('../model/user.model')
 const find = async (obj) => {
     const User = await getUser()
     const result = await User.find(obj).toArray()
-    User.close()
     return result
 }
 const findOne = async (obj) => {
     const User = await getUser()
     const result = await User.findOne(obj)
-    User.close()
     return result
 }
 const findOneList = async (query, filter) => {
     const User = await getUser()
     const result = await User.findOne(query, filter)
-    User.close()
     return result
 }
 const addUser = async (obj) => {
@@ -50,7 +47,6 @@ const deleteUserOne = async (obj) => {
 const aggregate = async (obj) => {
     const User = await getUser()
     const result = await User.aggregate(obj).toArray()
-    User.close()
     return result
 }
 

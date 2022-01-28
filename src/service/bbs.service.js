@@ -31,14 +31,12 @@ class bbsService {
     boardFindMany = async (obj) => {
         const Board = await getBoards()
         const res = await Board.find(obj).toArray()
-        Board.close()
         return res
     }
 
     updateBoard = async (fliter, obj) => {
         const Board = await getBoards()
         const res = await Board.updateOne(fliter, obj)
-        Board.close()
         return res
     }
     updateBoardOne = async (list) => {
@@ -46,112 +44,128 @@ class bbsService {
         const res = await Board.updateOne(...list)
         return res
     }
-    async getSingleBoard (list) {
+    async getSingleBoard(list) {
         const Board = await getBoards()
         const res = await Board.aggregate(list).toArray()
         return res[0]
     }
     //帖子操作相关
-    async addPost (obj) {
+    async addPost(obj) {
         const Post = await getPost()
         const res = await Post.insertOne(obj)
         return res
     }
-    async updatePostSerive (list) {
+    async updatePostSerive(list) {
         const Post = await getPost()
         const res = await Post.updateOne(...list)
         return res
     }
-    async updatePostManySerive (list) {
+    async updatePostManySerive(list) {
         const Post = await getPost()
         const res = await Post.updateMany(...list)
         return res
     }
-    async getPostByPage (list) {
+    async getPostByPage(list) {
         const Post = await getPost()
         const res = await Post.aggregate(list).toArray()
         return res
     }
 
-    async findPostOneServie (objlist) {
+    async findPostOneServie(objlist) {
         const Post = await getPost()
         const res = await Post.findOne(...objlist)
         return res
     }
-    async aggregatePostServie (objlist) {
+    async aggregatePostServie(objlist) {
         const Post = await getPost()
         const res = await Post.aggregate(objlist).toArray()
         return res
     }
-    async findPostManyServie (objlist) {
+    async findPostManyServie(objlist) {
         const Post = await getPost()
         const res = await Post.find(...objlist).toArray()
         return res
     }
-    async findPost (obj) {
+    async findPost(obj) {
         const Post = await getPost()
         const res = await Post.find(obj).toArray()
         return res
     }
-    async updateOnePost (filter, data) {
+    async updateOnePost(filter, data) {
         const Post = await getPost()
         const res = await Post.updateOne(filter, data)
         return res
     }
-    async deletePost (data) {
+    async deletePost(data) {
         const Post = await getPost()
         const res = await Post.deleteOne(data)
         return res
     }
-//评论相关
-    async insertReview (data) {
+    //评论相关
+    async insertReview(data) {
         const Review = await getReview()
         const res = await Review.insertOne(data)
         return res
     }
 
-    async findAllReview (data) {
+    async findReviewOneServie(list) {
+        const Review = await getReview()
+        const res = await Review.findOne(...list)
+        return res
+    }
+    async findAllReview(data) {
         const Review = await getReview()
         const res = await Review.find(data).toArray()
         return res
     }
 
-    async deleteReviewService (data) {
+    async deleteReviewService(data) {
         const Review = await getReview()
         const res = await Review.deleteOne(data)
         return res
     }
-    async updateReviewService (list) {
+    async updateReviewService(list) {
         const Review = await getReview()
         const res = await Review.updateOne(...list)
         return res
     }
-    async updateReviewManyService (list) {
+    async updateReviewManyService(list) {
         const Review = await getReview()
         const res = await Review.updateMany(...list)
         return res
     }
-    async addCollectionServie (list) {
+    //个人相关信息
+    async addCollectionServie(list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.updateOne(...list)
         return res
     }
-    async getCollectionServie (list) {
+    async getCollectionServie(list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.findOne(...list)
         return res
     }
-    async updateLikeAndCollectionServie (list) {
+    async updateLikeAndCollectionServie(list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.updateOne(...list)
         return res
     }
-    async findLikeAndCollectionServie (list) {
+    async updateManyLikeAndCollectionServie(list) {
+        const likeAndConection = await getLikeAndConection()
+        const res = await likeAndConection.updateMany(...list)
+        return res
+    }
+    async findLikeAndCollectionServie(list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.findOne(...list)
         return res
     }
-    async aggregateLikeAndCollectionServie (list) {
+    async findManyLikeAndCollectionServie(list) {
+        const likeAndConection = await getLikeAndConection()
+        const res = await likeAndConection.find(...list).toArray()
+        return res
+    }
+    async aggregateLikeAndCollectionServie(list) {
         const likeAndConection = await getLikeAndConection()
         const res = await likeAndConection.aggregate(list).toArray()
         return res

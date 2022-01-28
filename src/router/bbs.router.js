@@ -21,7 +21,7 @@ const {
     getRecommend,
     getPostById,
 } = require('../controller/bbs.controller')
-const { addLike, delLike, getLike, getPostByUserId, getRecommendByUserId, getCollectionByUserId, getIndex } = require('../controller/detail.controller')
+const { addLike, delLike, getLike, getPostByUserId, getRecommendByUserId, getCollectionByUserId, getIndex, getAllNotice, getNoticeNum, noticeFindOut } = require('../controller/detail.controller')
 const { auth, hadAdminPermission } = require('../middleware/auth.middleware')
 const { validator } = require('../middleware/utils.middleware')
 
@@ -123,6 +123,8 @@ router.post(
         postId: 'string',
         content: 'string',
         quoteId: 'string',
+        quoteUserId: 'string',
+        postUserId:'string'
     }),
     auth,
     addReview
@@ -228,5 +230,20 @@ router.get(
     auth,
     getIndex 
 )
-
+//消息处理
+router.get(
+    '/notice',
+    auth,
+    getAllNotice
+)
+router.get(
+    '/noticeNum',
+    auth,
+    getNoticeNum 
+)
+router.get(
+    '/noticeFindOut',
+    auth,
+    noticeFindOut
+)
 module.exports = router

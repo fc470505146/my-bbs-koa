@@ -9,8 +9,9 @@ const {
 
 const auth = async (ctx, next) => {
     const { authorization = '' } = ctx.request.header
+    let token
     try {
-        const token = authorization.replace('Bearer ', '')
+        token = authorization.replace('Bearer ', '')
         const user = jwt.verify(token, JWT_SECRET)
         ctx.state.user = user
     } catch (error) {
@@ -19,7 +20,7 @@ const auth = async (ctx, next) => {
                 console.error('token过期', error)
                 return ctx.app.emit('error', tokenExpiredError, ctx)
             case 'JsonWebTokenError':
-                console.error('无效token', error)
+                console.error('无效token', 'token:', token, error)
                 return ctx.app.emit('error', tokenInvalid, ctx)
             default:
                 console.error('token异常', error)
