@@ -101,6 +101,12 @@ module.exports = {
         status: 409,
         result: '',
     },
+    dontTypeFileError: {
+        code: '10019',
+        message: '上传文件类型应为xlxs类型',
+        status: 409,
+        result: '',
+    },
     notIncludedFieldError: {
         code: '10018',
         message: '未包含必须字段',

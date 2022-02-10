@@ -1,0 +1,3 @@
+{"_id":ObjectId("61efc22da35259eea603d379"),"postId":ObjectId("61e90703a4c7a627b786d81a"),"content":"asdsad","quoteId":"61efc16ac99b3a3c69d75c06","User":{"_id":ObjectId("61cfafc28de69ef19ee38020"),"nickname":"超级管理员","avatar":"/img/86e61374bef856c7f5ef2d400.jpeg"},"like":0,"createTime":ISODate("2022-01-25T09:26:05.570Z"),"lastModified":ISODate("2022-01-25T09:26:05.570Z")}
+
+{"_id":ObjectId("61e257fb4c2fd786018903bb"),"title":"真帅fc","description":"asdasd","priority":0,"boardId":ObjectId("61dc585fd8cc36364e298edb"),"User":{"_id":"61cfafc28de69ef19ee38020","nickname":"超级管理员"},"lastModified":ISODate("2022-01-15T05:13:31.614Z"),"recommend":0}

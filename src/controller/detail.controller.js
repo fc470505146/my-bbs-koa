@@ -9,8 +9,6 @@ const {
     boardAggregate,
     findPostOneServie,
     findReviewOneServie,
-    findPostManyServie,
-    findManyLikeAndCollectionServie,
 } = require('../service/bbs.service')
 
 class DetailController {

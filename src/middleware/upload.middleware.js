@@ -35,8 +35,8 @@ const paresExcel = async (ctx, next) => {
     const form = formidable({
         uploadDir: headExcelPath,
         keepExtensions: true,
-        filter: ({ mimetype }) => {
-            return mimetype && 1
+        filter: ({ originalFilename }) => {
+            return originalFilename && originalFilename.includes('xlsx')
         },
     })
     await new Promise((resolve, reject) => {

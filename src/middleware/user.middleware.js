@@ -11,6 +11,8 @@ const {
     changePasswordError,
     verifyParmsError,
     notIncludedFieldError,
+    dontTypeFileError,
+    ServiceError,
 } = require('../constant/err.type')
 
 //校验值
@@ -97,7 +99,7 @@ const checkPassword = async (ctx, next) => {
         const { password } = ctx.request.body
         const res = await findOne({ username })
         if (res.password !== password) {
-            console.error(res,password)
+            console.error(res, password)
             ctx.app.emit('error', userNameOrPasswordError, ctx)
             return
         }
@@ -145,7 +147,12 @@ const verifyFindUser = async (ctx, next) => {
 
 const parseUserList = async (ctx, next) => {
     try {
-        const filepath = ctx.state.files.file.filepath
+        const filepath = ctx.state.files?.file?.filepath
+        if (!filepath) {
+            console.error('文件不是xlxs类型')
+            ctx.app.emit('error', dontTypeFileError, ctx)
+            return
+        }
         const list = await xlsx.parse(filepath)[0]
         //校验是否存在3个必须字段
         if (
@@ -179,6 +186,8 @@ const parseUserList = async (ctx, next) => {
         ctx.state.userlist = userlist
     } catch (error) {
         console.error(error)
+        ctx.app.emit('error',ServiceError , ctx)
+        return
     }
     await next()
 }

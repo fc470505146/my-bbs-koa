@@ -1,0 +1,12 @@
+<body>
+    <div desc="houdunren">在线学习</div>
+    <div desc="hdcms">开源产品</div>
+</body>
+<script>
+    let divs = document.querySelectorAll('div')
+    divs.forEach(function (item) {
+        item.addEventListener('click', function () {
+            console.log(item.getAttribute('desc'))
+        })
+    })
+</script>
