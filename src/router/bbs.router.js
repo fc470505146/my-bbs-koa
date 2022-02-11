@@ -4,7 +4,7 @@ const { addLike, delLike, getLike, getPostByUserId, getRecommendByUserId, getCol
 const { auth, hadAdminPermission } = require('../middleware/auth.middleware')
 const { validator } = require('../middleware/utils.middleware')
 
-const router = new Router({ prefix: '/bbs' })
+const router = new Router({ prefix: '/api/bbs' })
 //添加板块
 router.post( '/addBoard',validator({ boardName: 'string', description: 'string', priority: 'number', }), auth, hadAdminPermission, addBoard )
 //删除板块

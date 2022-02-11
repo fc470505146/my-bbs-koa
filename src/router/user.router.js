@@ -5,7 +5,7 @@ const { parseUpload, paresExcel } = require('../middleware/upload.middleware')
 const { verifyUser, verifyLogin, verifyDeleteUser, verifyChangePassword, checkPassword, verifyFindPage, verifyFindUser, parseUserList, } = require('../middleware/user.middleware')
 const { validator } = require('../middleware/utils.middleware')
 
-const router = new Router({ prefix: '/users' })
+const router = new Router({ prefix: '/api/users' })
 
 //注册接口
 router.post( '/register', validator({ username: 'string', password: 'string', nickname: 'string', }), verifyUser, register )

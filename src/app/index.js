@@ -14,6 +14,7 @@ const app = new Koa()
 //     await next()
 // })
 //解决跨域问题
+
 app.use(cors())
 //设置静态文件位置
 app.use(serve(path.resolve('public')))
