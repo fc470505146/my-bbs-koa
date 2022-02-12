@@ -175,9 +175,9 @@ const parseUserList = async (ctx, next) => {
         list.data.forEach((item, index) => {
             if (index !== 0) {
                 userlist.push({
-                    username: item[usernameIndex],
-                    password: item[passwordIndex],
-                    nickname: item[nicknameIndex],
+                    username: item[usernameIndex].toString(),
+                    password: item[passwordIndex].toString(),
+                    nickname: item[nicknameIndex].toString(),
                     roles: ['user'],
                 })
             }
