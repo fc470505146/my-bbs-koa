@@ -188,13 +188,13 @@ class UserController {
         }
     }
     async getUserInfo(ctx) {
-        const { iat, exp, username } = ctx.state.user
-        console.log('getUserInfo:', iat, exp)
+        const {  username } = ctx.state.user
+        // console.log('getUserInfo:', iat, exp)
         const res = await findOneList(
             { username },
             { projection: { password: 0 } }
         )
-        console.log(res)
+        // console.log(res)
         ctx.body = {
             code: 0,
             status: 200,
