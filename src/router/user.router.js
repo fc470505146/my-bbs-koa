@@ -90,7 +90,7 @@ router.post('/getAvatar', validator({ _id: 'string' }), auth, getUserAvatarById)
 //用户自己修改信息
 router.post(
     '/update/userInfo',
-    validator({ nickname: 'string' }),
+    validator({ nickname: { type: 'string', require: true, max: 12 } }),
     auth,
     updateUserInfoById
 )
