@@ -101,7 +101,7 @@ router.post(
     auth,
     getSingleBoardInfo
 )
-
+//根据id查询帖子
 router.post('/getPostById', validator({ _id: 'string' }), auth, getPostById)
 
 //修改帖子
