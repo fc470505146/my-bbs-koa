@@ -56,6 +56,7 @@ class UserController {
         //获取username
         const userInfo = ctx.state.user
         try {
+            
             delete userInfo.password
             userInfo._id = userInfo._id.toString()
             // 签发token
@@ -70,6 +71,7 @@ class UserController {
         } catch (error) {
             console.error('登录失败', error)
             ctx.app.emit('error', loginError, ctx)
+            return
         }
     }
 
@@ -188,7 +190,7 @@ class UserController {
         }
     }
     async getUserInfo(ctx) {
-        const {  username } = ctx.state.user
+        const { username } = ctx.state.user
         // console.log('getUserInfo:', iat, exp)
         const res = await findOneList(
             { username },

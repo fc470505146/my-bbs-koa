@@ -27,7 +27,6 @@ const parseUpload = async (ctx, next) => {
         ctx.app.emit('error', ServiceError, ctx)
         return
     }
-
     await next()
 }
 const headExcelPath = path.join(__dirname, '../assets/excel')

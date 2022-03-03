@@ -127,7 +127,7 @@ router.post(
     '/review/addReview',
     validator({
         postId: 'string',
-        content: 'string',
+        content: { type: 'string', require: true, max: 1000 },
         quoteId: 'string',
         quoteUserId: 'string',
         postUserId: 'string',

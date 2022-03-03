@@ -10,6 +10,7 @@ const {
     findPostOneServie,
     findReviewOneServie,
 } = require('../service/bbs.service')
+const winstonLogger = require('../winstonLogger')
 
 class DetailController {
     async addLike(ctx) {
@@ -190,6 +191,7 @@ class DetailController {
     }
     async getIndex(ctx) {
         try {
+            winstonLogger.info('用户访问首页:' + ctx.state.user.nickname)
             ctx.body = {
                 code: 0,
                 status: 200,

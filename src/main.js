@@ -1,8 +1,9 @@
 const app = require('./app')
 const { APP_PORT } = require('./config')
-
+const winlogger = require('./winstonLogger')
+winlogger.info('项目开始运行')
 app.listen(APP_PORT, () => {
-	console.log(`server is running on
+    console.log(`server is running on
      http://localhost:${APP_PORT}`)
 })
 
