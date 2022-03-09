@@ -191,8 +191,9 @@ class DetailController {
     }
     async getIndex(ctx) {
         try {
+            console.log(ctx.request,ctx.ips,ctx.ip)
             winstonLogger.info(
-                `${ctx.ip }用户访问首页:` + ctx.state.user.nickname
+                `${ctx.ip}用户访问首页:` + ctx.state.user.nickname
             )
             ctx.body = {
                 code: 0,
