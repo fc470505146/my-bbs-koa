@@ -56,7 +56,6 @@ class UserController {
         //获取username
         const userInfo = ctx.state.user
         try {
-            
             delete userInfo.password
             userInfo._id = userInfo._id.toString()
             // 签发token
